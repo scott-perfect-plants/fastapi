@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<body style="font-family:Arial;max-width:600px;margin:auto;padding:2rem">
+  <h2>Drag & drop .xlsx files</h2>
+  <input id="file" type="file" multiple accept=".xlsx"
+         style="width:100%;padding:1rem;border:1px solid #999">
+
+  <pre id="log" style="white-space:pre-wrap"></pre>
+
+<script>
+const endpoint = "/upload";
+document.getElementById('file').onchange = async ev => {
+  const log = t => document.getElementById('log').textContent += t + "\n";
+  for (const f of ev.target.files) {
+    const fd = new FormData(); fd.append("file", f);
+    const r  = await fetch(endpoint, {method:"POST", body:fd});
+    const js = await r.json().catch(()=>({}));
+    r.ok ? log(`✔ ${f.name} → ${js.saved}`) :
+           log(`✖ ${f.name} (${r.status})`);
+  }
+};
+</script>
+</body>
+</html>
